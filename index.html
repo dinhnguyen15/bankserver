@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý chi nhánh ngân hàng</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Quản lý</h2>
+            <ul>
+                <li><a href="#" onclick="showTab('nhanVien')">Quản lý nhân viên</a></li>
+                <li><a href="#" onclick="showTab('khachHang')">Quản lý khách hàng</a></li>
+                <li><a href="#" onclick="showTab('giaoDich')">Quản lý giao dịch</a></li>
+                <li><a href="#" onclick="showTab('taiKhoan')">Quản lý tài khoản</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div id="nhanVienTab">
+                <h1>Quản lý nhân viên</h1>
+                <form id="nhanVienForm">
+                    <div>
+                        <label for="MaNhanVien">Mã Nhân Viên:</label>
+                        <input type="text" id="MaNhanVien" placeholder="Mã Nhân Viên" required>
+                    </div>
+                    <div>
+                        <label for="CMT">Chứng Minh Thư:</label>
+                        <input type="text" id="CMT" placeholder="Chứng minh thư" required>
+                    </div>
+                    <div>
+                        <label for="TenNhanVien">Tên Nhân Viên:</label>
+                        <input type="text" id="TenNhanVien" placeholder="Tên Nhân Viên" required>
+                    </div>
+                    <div>
+                        <label for="NgaySinh">Ngày Sinh:</label>
+                        <input type="date" id="NgaySinh" required>
+                    </div>
+                    <div>
+                        <label for="DiaChi">Địa Chỉ:</label>
+                        <input type="text" id="DiaChi" placeholder="Địa Chỉ" required>
+                    </div>
+                    <div>
+                        <label for="BacNghe">Bậc Nghề:</label>
+                        <select id="BacNghe" required>
+                            <option value="">Chọn bậc nghề</option>
+                            <option value="Nhân viên">Nhân viên</option>
+                            <option value="Chuyên viên">Chuyên viên</option>
+                            <option value="Thực tập sinh">Thực tập sinh</option>
+                            <option value="Trưởng nhóm">Trưởng nhóm</option>
+                            <option value="Quản lý">Quản lý</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ThamNien">Thâm Niên:</label>
+                        <input type="number" id="ThamNien" placeholder="Thâm Niên" required>
+                    </div>
+                    <div>
+                        <label for="ViTri">Vị Trí Công Việc:</label>
+                        <select id="ViTri" required>
+                            <option value="">Chọn vị trí công việc</option>
+                            <option value="Kinh doanh">Kinh doanh</option>
+                            <option value="Dịch vụ">Dịch vụ</option>
+                            <option value="Tài chính-Kế toán">Tài chính-Kế toán</option>
+                            <option value="IT">IT</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <button type="button" onclick="themNhanVien()">Thêm Nhân Viên</button>
+                </form>
+            
+                <div id="danhSachNhanVien"></div>
+            </div>
+            
+            <div id="khachHangTab" style="display: none;">
+                <h1>Quản lý khách hàng</h1>
+                <form id="khachHangForm">
+                    <div>
+                        <label for="MaKhachHang">Mã Khách Hàng:</label>
+                        <input type="number" id="MaKhachHang" placeholder="Mã Khách Hàng" required>
+                    </div>
+                    <div>
+                        <label for="CMT">Chứng Minh Thư:</label>
+                        <input type="text" id="CMT2" placeholder="Chứng Minh Thư" required>
+                    </div>
+                    <div>
+                        <label for="TenKhachHang">Tên Khách Hàng:</label>
+                        <input type="text" id="TenKhachHang" placeholder="Tên Khách Hàng" required>
+                    </div>
+                    <div>
+                        <label for="NgaySinh">Ngày Sinh:</label>
+                        <input type="date" id="NgaySinh2" required>
+                    </div>
+                    <div>
+                        <label for="DiaChi">Địa Chỉ:</label>
+                        <input type="text" id="DiaChi2" placeholder="Địa Chỉ" required>
+                    </div>
+                    <button type="button" onclick="themKhachHang()">Thêm Khách Hàng</button>
+                </form>
+                <div id="danhSachKhachHang"></div>
+            </div>
+            
+            <div id="giaoDichTab" style="display: none;">
+                <h1>Quản lý giao dịch</h1>
+                <form id="giaoDichForm">
+
+                    <div>
+                        <label for="MaNhanVien">Nhân viên thực hiện:</label>
+                        <select id="MaNhanVien">
+                            <option value="">Chọn nhân viên</option>
+                            <!-- Danh sách nhân viên sẽ được thêm vào đây -->
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="LoaiGiaoDich">Loại Giao Dịch:</label>
+                        <select id="LoaiGiaoDich" onchange="hienThiTruong()"> 
+                            <option value="">Chọn loại giao dịch</option>
+                            <option value="NopTien">Nộp tiền</option>
+                            <option value="RutTien">Rút tiền</option>
+                            <option value="ChuyenKhoan">Chuyển khoản</option>
+                        </select>
+                    </div>
+                    
+                    <div id="trongGiaoDich">
+                        <!-- Các trường sẽ được thêm vào đây -->
+                    </div>
+                    
+                    <button type="button" onclick="themGiaoDich()">Thực hiện Giao Dịch</button>
+                </form>
+                <div id="danhSachGiaoDich"></div>
+            </div>
+            
+            
+            <div id="taiKhoanTab" style="display: none;">
+                <h1>Quản lý tài khoản</h1>
+                <form id="taiKhoanForm">
+                    <div>
+                        <label for="MaTaiKhoan">Mã Tài Khoản:</label>
+                        <input type="number" id="MaTaiKhoan" placeholder="Mã Tài Khoản" required>
+                    </div>
+                    <div>
+                        <label for="MaKhachHang">Tên Khách Hàng:</label>
+                        <select id="MaKhachHang2" required>
+                            <option value="" disabled selected>Chọn khách hàng</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="LoaiTaiKhoan">Loại Tài Khoản:</label>
+                        <select id="LoaiTaiKhoan" required onchange="hienThiThongTinLoaiTaiKhoan()">
+                            <option value="" disabled selected>Chọn loại tài khoản</option>
+                            <option value="Tín dụng">Tín dụng</option>
+                            <option value="Tiết kiệm">Tiết kiệm</option>
+                        </select>
+                    </div>
+                    <div id="soDuDiv">
+                        <label for="SoDu">Số Dư:</label>
+                        <input type="number" id="SoDu" placeholder="Số Dư" step="0.01" required>
+                    </div>
+                    <div id="laiSuatDiv" style="display: none;">
+                        <label for="LaiSuat">Lãi Suất:</label>
+                        <input type="number" id="LaiSuat" placeholder="Lãi Suất" step="0.01">
+                    </div>
+                    <div id="hanMucTinDungDiv" style="display: none;">
+                        <label for="HanMucTinDung">Hạn Mức Tín Dụng:</label>
+                        <input type="number" id="HanMucTinDung" placeholder="Hạn Mức Tín Dụng" step="0.01">
+                    </div>
+                    <div id="soDuToiThieuDiv" style="display: none;">
+                        <label for="SoDuToiThieu">Số Dư Tối Thiểu:</label>
+                        <input type="number" id="SoDuToiThieu" placeholder="Số Dư Tối Thiểu" step="0.01">
+                    </div>
+                    <button type="button" onclick="themTaiKhoan()">Thêm Tài Khoản</button>
+                </form>
+                <div id="danhSachTaiKhoan"></div>
+            </div>
+            
+            
+        </div>
+    </div>
+</body>
+</html>
