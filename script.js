@@ -426,7 +426,7 @@ function hienThiThongTinLoaiTaiKhoan() {
     // Hiện các trường tùy thuộc vào loại tài khoản
     if (loaiTaiKhoan === 'Tín dụng') {
         hanMucTinDungDiv.style.display = 'block';
-    } else if (loaiTaiKhoan === 'Tiết kiệm') {
+    } else if (loaiTaiKhoan === 'Gửi tiền') {
         laiSuatDiv.style.display = 'block';
         soDuToiThieuDiv.style.display = 'block';
     }
@@ -687,7 +687,7 @@ async function editTaiKhoan(id, btn) {
     columns[3].innerHTML = `<input type="number" value="${soDu}" step="0.01">`; // Số dư
 
     // Hiện các trường tùy thuộc vào loại tài khoản
-    if (loaiTaiKhoan === 'Tiết kiệm') {
+    if (loaiTaiKhoan === 'Gửi tiền') {
         columns[4].innerHTML = `<input type="number" value="${laiSuat}" step="0.01">`; // Lãi suất có thể sửa
         columns[5].innerHTML = `<input type="number" value="${hanMucTinDung}" step="0.01" readonly>`; // Hạn mức tín dụng không thể sửa
         columns[6].innerHTML = `<input type="number" value="${soDuToiThieu}" step="0.01">`; // Số dư tối thiểu có thể sửa
