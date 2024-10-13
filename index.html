@@ -24,7 +24,7 @@
                 <form id="nhanVienForm">
                     <div>
                         <label for="MaNhanVien">Mã Nhân Viên:</label>
-                        <input type="text" id="MaNhanVien" placeholder="Mã Nhân Viên" required>
+                        <input type="number" id="MaNhanVien" placeholder="Mã Nhân Viên" min="1" required>
                     </div>
                     <div>
                         <label for="CMT">Chứng Minh Thư:</label>
@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <label for="ThamNien">Thâm Niên:</label>
-                        <input type="number" id="ThamNien" placeholder="Thâm Niên" required>
+                        <input type="number" id="ThamNien" placeholder="Thâm Niên" min="0" required>
                     </div>
                     <div>
                         <label for="ViTri">Vị Trí Công Việc:</label>
@@ -79,7 +79,7 @@
                 <form id="khachHangForm">
                     <div>
                         <label for="MaKhachHang">Mã Khách Hàng:</label>
-                        <input type="number" id="MaKhachHang" placeholder="Mã Khách Hàng" required>
+                        <input type="number" id="MaKhachHang" placeholder="Mã Khách Hàng" min="1" required>
                     </div>
                     <div>
                         <label for="CMT">Chứng Minh Thư:</label>
@@ -108,7 +108,7 @@
 
                     <div>
                         <label for="MaNhanVien">Nhân viên thực hiện:</label>
-                        <select id="MaNhanVien">
+                        <select id="MaNhanVienGD">
                             <option value="">Chọn nhân viên</option>
                             <!-- Danh sách nhân viên sẽ được thêm vào đây -->
                         </select>
@@ -128,7 +128,7 @@
                         <!-- Các trường sẽ được thêm vào đây -->
                     </div>
                     
-                    <button type="button" onclick="themGiaoDich()">Thực hiện Giao Dịch</button>
+                    <button type="button" onclick="thucHienGiaoDich()">Thực hiện Giao Dịch</button>
                 </form>
                 <div id="danhSachGiaoDich"></div>
             </div>
@@ -139,7 +139,7 @@
                 <form id="taiKhoanForm">
                     <div>
                         <label for="MaTaiKhoan">Mã Tài Khoản:</label>
-                        <input type="number" id="MaTaiKhoan" placeholder="Mã Tài Khoản" required>
+                        <input type="number" id="MaTaiKhoan" placeholder="Mã Tài Khoản" min="1" required>
                     </div>
                     <div>
                         <label for="MaKhachHang">Tên Khách Hàng:</label>
@@ -157,19 +157,19 @@
                     </div>
                     <div id="soDuDiv">
                         <label for="SoDu">Số Dư:</label>
-                        <input type="number" id="SoDu" placeholder="Số Dư" step="0.01" required>
+                        <input type="number" id="SoDu" placeholder="Số Dư" step="0.01" min="0" required>
                     </div>
                     <div id="laiSuatDiv" style="display: none;">
                         <label for="LaiSuat">Lãi Suất:</label>
-                        <input type="number" id="LaiSuat" placeholder="Lãi Suất" step="0.01">
+                        <input type="number" id="LaiSuat" placeholder="Lãi Suất" st min="0"ep="0.01">
                     </div>
                     <div id="hanMucTinDungDiv" style="display: none;">
                         <label for="HanMucTinDung">Hạn Mức Tín Dụng:</label>
-                        <input type="number" id="HanMucTinDung" placeholder="Hạn Mức Tín Dụng" step="0.01">
+                        <input type="number" id="HanMucTinDung" placeholder="Hạn Mức Tín Dụng" st min="0"ep="0.01">
                     </div>
                     <div id="soDuToiThieuDiv" style="display: none;">
                         <label for="SoDuToiThieu">Số Dư Tối Thiểu:</label>
-                        <input type="number" id="SoDuToiThieu" placeholder="Số Dư Tối Thiểu" step="0.01">
+                        <input type="number" id="SoDuToiThieu" placeholder="Số Dư Tối Thiểu" st min="0"ep="0.01">
                     </div>
                     <button type="button" onclick="themTaiKhoan()">Thêm Tài Khoản</button>
                 </form>

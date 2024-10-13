@@ -539,10 +539,35 @@ document.addEventListener("DOMContentLoaded", () => {
     loadKhachHangOptions();
 });
 
+// Hàm lấy toàn bộ danh sách tài khoản và kiểm tra mã tài khoản
+async function layDanhSachVaKiemTraMaTaiKhoan(maTaiKhoan) {
+    try {
+        const response = await fetch(`${baseURL}api/taikhoan`);
+        const data = await response.json();
+
+        // Duyệt qua danh sách tài khoản để kiểm tra mã tài khoản
+        const taiKhoanTonTai = data.some(taiKhoan => taiKhoan.MaTaiKhoan === maTaiKhoan);
+        return taiKhoanTonTai; // Trả về true nếu mã tài khoản tồn tại, false nếu không
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách tài khoản!', error);
+        return false;
+    }
+}
+
 // Hàm thêm tài khoản
 async function themTaiKhoan() {
+    const maTaiKhoan = document.getElementById('MaTaiKhoan').value;
+
+    // Kiểm tra xem mã tài khoản có trùng hay không
+    const maTaiKhoanTonTai = await layDanhSachVaKiemTraMaTaiKhoan(maTaiKhoan);
+    if (maTaiKhoanTonTai) {
+        alert('Mã tài khoản đã tồn tại! Vui lòng nhập mã khác.');
+        return;
+    }
+
+    // Nếu mã tài khoản chưa tồn tại, tiếp tục thêm tài khoản
     const taiKhoan = {
-        MaTaiKhoan: document.getElementById('MaTaiKhoan').value,
+        MaTaiKhoan: maTaiKhoan,
         MaKhachHang: document.getElementById('MaKhachHang2').value,
         LoaiTaiKhoan: document.getElementById('LoaiTaiKhoan').value,
         SoDu: document.getElementById('SoDu').value,
@@ -570,6 +595,7 @@ async function themTaiKhoan() {
         alert('Lỗi kết nối tới server!');
     }
 }
+
 
 
 // Hàm load danh sách khách hàng vào dropdown trong phần chỉnh sửa
@@ -802,7 +828,14 @@ async function layDanhSachGiaoDich() {
                         <td>${tenKhachHangDich}</td>
                         <td>${giaoDich.LoaiGiaoDich}</td>
                         <td>${giaoDich.SoTien}</td>
-                        <td>${new Date(giaoDich.NgayGiaoDich).toLocaleDateString()}</td>
+                        <td>${new Date(giaoDich.NgayGiaoDich).toLocaleString('vi-VN', { 
+                            year: 'numeric', 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            second: '2-digit' 
+                        })}</td>
                         <td>${giaoDich.MaNhanVien}</td>
                         <td>${tenNhanVien}</td>
                     </tr>
@@ -822,14 +855,72 @@ async function layDanhSachGiaoDich() {
     }
 }
 
+async function layDanhSachNhanVienGiaoDich() {
+    try {
+        const response = await fetch(`${baseURL}api/nhanvien`);
+        const data = await response.json();
 
+        if (response.ok) {
+            const selectNhanVien = document.getElementById('MaNhanVienGD');
+            // Xóa các tùy chọn hiện tại
+            selectNhanVien.innerHTML = `<option value="">Chọn nhân viên</option>`;
+            // Thêm các nhân viên vào dropdown
+            data.forEach(nhanVien => {
+                selectNhanVien.innerHTML += `
+                    <option value="${nhanVien.MaNhanVien}">${nhanVien.TenNhanVien}</option>
+                `;
+            });
+        } else {
+            alert('Không thể lấy danh sách nhân viên!');
+        }
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách nhân viên:', error);
+        alert('Lỗi kết nối tới server!');
+    }
+}
 
-document.addEventListener("DOMContentLoaded", layDanhSachGiaoDich);
+document.addEventListener("DOMContentLoaded", async () => {
+    await layDanhSachGiaoDich();
+    await layDanhSachNhanVienGiaoDich(); 
+});
 
-function hienThiTruong() {
+async function layDanhSachTaiKhoanGiaoDich() {
+    try {
+        const response = await fetch(`${baseURL}api/taikhoan`);
+        const data = await response.json();
+
+        if (response.ok) {
+            // Lưu trữ danh sách tài khoản
+            return data;
+        } else {
+            alert('Không thể lấy danh sách tài khoản!');
+            return [];
+        }
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách tài khoản:', error);
+        alert('Lỗi kết nối tới server!');
+        return [];
+    }
+}
+
+function capNhatTaiKhoanNhan(selectedAccount, danhSachTaiKhoan) {
+    const taiKhoanNhanSelect = document.getElementById('MaTaiKhoanNhan');
+    taiKhoanNhanSelect.innerHTML = `
+        <option value="">Chọn tài khoản nhận</option>
+        ${danhSachTaiKhoan.map(taiKhoan => `
+            <option value="${taiKhoan.MaTaiKhoan}" ${taiKhoan.MaTaiKhoan === selectedAccount ? 'disabled' : ''}>
+                ${taiKhoan.MaTaiKhoan}
+            </option>
+        `).filter(option => option !== '').join('')}
+    `;
+}
+
+async function hienThiTruong() {
     const loaiGiaoDich = document.getElementById('LoaiGiaoDich').value;
     const trongGiaoDich = document.getElementById('trongGiaoDich');
     let output = '';
+
+    const danhSachTaiKhoan = await layDanhSachTaiKhoanGiaoDich();
 
     switch (loaiGiaoDich) {
         case 'NopTien':
@@ -838,7 +929,9 @@ function hienThiTruong() {
                     <label for="MaTaiKhoan">Tài Khoản:</label>
                     <select id="MaTaiKhoan" required>
                         <option value="">Chọn tài khoản</option>
-                        <!-- Option sẽ được thêm vào từ API hoặc mảng dữ liệu -->
+                        ${danhSachTaiKhoan.map(taiKhoan => `
+                            <option value="${taiKhoan.MaTaiKhoan}">${taiKhoan.MaTaiKhoan}</option>
+                        `).join('')}
                     </select>
                 </div>
                 <div>
@@ -854,7 +947,9 @@ function hienThiTruong() {
                     <label for="MaTaiKhoan">Tài Khoản:</label>
                     <select id="MaTaiKhoan" required>
                         <option value="">Chọn tài khoản</option>
-                        <!-- Option sẽ được thêm vào từ API hoặc mảng dữ liệu -->
+                        ${danhSachTaiKhoan.map(taiKhoan => `
+                            <option value="${taiKhoan.MaTaiKhoan}">${taiKhoan.MaTaiKhoan}</option>
+                        `).join('')}
                     </select>
                 </div>
                 <div>
@@ -870,14 +965,18 @@ function hienThiTruong() {
                     <label for="MaTaiKhoanGui">Tài Khoản Gửi:</label>
                     <select id="MaTaiKhoanGui" required>
                         <option value="">Chọn tài khoản gửi</option>
-                        <!-- Option sẽ được thêm vào từ API hoặc mảng dữ liệu -->
+                        ${danhSachTaiKhoan.map(taiKhoan => `
+                            <option value="${taiKhoan.MaTaiKhoan}">${taiKhoan.MaTaiKhoan}</option>
+                        `).join('')}
                     </select>
                 </div>
                 <div>
                     <label for="MaTaiKhoanNhan">Tài Khoản Nhận:</label>
                     <select id="MaTaiKhoanNhan" required>
                         <option value="">Chọn tài khoản nhận</option>
-                        <!-- Option sẽ được thêm vào từ API hoặc mảng dữ liệu -->
+                        ${danhSachTaiKhoan.map(taiKhoan => `
+                            <option value="${taiKhoan.MaTaiKhoan}">${taiKhoan.MaTaiKhoan}</option>
+                        `).join('')}
                     </select>
                 </div>
                 <div>
@@ -888,58 +987,85 @@ function hienThiTruong() {
             break;
 
         default:
-            output = ''; // Không có gì khi không chọn loại giao dịch
+            output = ''; 
     }
 
     trongGiaoDich.innerHTML = output;
 }
 
-async function themGiaoDich() {
+async function thucHienGiaoDich() {
+    const maNhanVien = document.getElementById('MaNhanVienGD').value;
     const loaiGiaoDich = document.getElementById('LoaiGiaoDich').value;
-    let maTaiKhoan, soTien, maTaiKhoanGui, maTaiKhoanNhan;
+    let apiUrl, requestData;
 
-    if (loaiGiaoDich === 'NopTien' || loaiGiaoDich === 'RutTien') {
-        maTaiKhoan = document.getElementById('MaTaiKhoan').value;
-        soTien = document.getElementById('SoTien').value;
-    } else if (loaiGiaoDich === 'ChuyenKhoan') {
-        maTaiKhoanGui = document.getElementById('MaTaiKhoanGui').value;
-        maTaiKhoanNhan = document.getElementById('MaTaiKhoanNhan').value;
-        soTien = document.getElementById('SoTien').value;
-    }
+    switch (loaiGiaoDich) {
+        case 'NopTien':
+            const taiKhoanNop = document.getElementById('MaTaiKhoan').value;
+            const soTienNop = document.getElementById('SoTien').value;
+            apiUrl = `${baseURL}api/nop-tien`;
+            requestData = {
+                taiKhoanDich: taiKhoanNop,
+                soTien: Number(soTienNop),
+                maNhanVien: maNhanVien
+            };
+            break;
 
-    const giaoDich = {
-        // Mã Giao Dịch sẽ được sinh tự động
-        MaTaiKhoan: maTaiKhoan,
-        SoTien: soTien,
-        LoaiGiaoDich: loaiGiaoDich,
-        NgayGiaoDich: new Date(), // Hoặc lấy từ trường ngày giao dịch nếu cần
-        MaNhanVien: document.getElementById('MaNhanVien').value
-    };
+        case 'RutTien':
+            const taiKhoanRut = document.getElementById('MaTaiKhoan').value;
+            const soTienRut = document.getElementById('SoTien').value;
+            apiUrl = `${baseURL}api/rut-tien`;
+            requestData = {
+                taiKhoanNguon: taiKhoanRut,
+                soTien: Number(soTienRut),
+                maNhanVien: maNhanVien
+            };
+            break;
 
-    // Thêm logic cho Chuyển Khoản
-    if (loaiGiaoDich === 'ChuyenKhoan') {
-        giaoDich.MaTaiKhoanGui = maTaiKhoanGui;
-        giaoDich.MaTaiKhoanNhan = maTaiKhoanNhan;
+        case 'ChuyenKhoan':
+            const taiKhoanGui = document.getElementById('MaTaiKhoanGui').value;
+            const taiKhoanNhan = document.getElementById('MaTaiKhoanNhan').value;
+            const soTienChuyen = document.getElementById('SoTien').value;
+            apiUrl = `${baseURL}api/chuyen-khoan`;
+            requestData = {
+                taiKhoanNguon: taiKhoanGui,
+                taiKhoanDich: taiKhoanNhan,
+                soTien: Number(soTienChuyen),
+                maNhanVien: maNhanVien
+            };
+            break;
+
+        default:
+            alert('Vui lòng chọn loại giao dịch.');
+            return;
     }
 
     try {
-        const response = await fetch(`${baseURL}api/giaodich`, {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(giaoDich)
+            body: JSON.stringify(requestData),
         });
 
-        if (response.ok) {
-            alert('Thêm giao dịch thành công!');
-            layDanhSachGiaoDich(); // Cập nhật danh sách giao dịch
-            document.getElementById('giaoDichForm').reset(); // Reset form
-            hienThiTruong(); // Reset trường hiển thị
-        } else {
-            alert('Không thể thêm giao dịch!');
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            alert('Lỗi: ' + errorMessage);
+            return;
         }
+
+        const result = await response.json();
+        alert(result.message);
+
+        // Reset form
+        document.getElementById('giaoDichForm').reset();
+        document.getElementById('trongGiaoDich').innerHTML = '';
+
+        // Cập nhật danh sách giao dịch thành công
+        layDanhSachGiaoDich();
+        layDanhSachTaiKhoan();
     } catch (error) {
-        alert('Lỗi kết nối tới server!');
+        console.error('Có lỗi xảy ra:', error);
+        alert('Có lỗi xảy ra trong quá trình thực hiện giao dịch.');
     }
 }
